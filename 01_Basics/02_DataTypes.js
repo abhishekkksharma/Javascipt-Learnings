@@ -7,7 +7,8 @@ let age = 20
 let isLoggedIn = true
 
 
-console.log(typeof null);
+console.log(typeof undefined); // undefined
+console.log(typeof null); // object
 
 
 //Data types-

@@ -11,7 +11,7 @@
         /* CSS Variables for theming */
         :root {
             --bg-color-light: #f0f2f5;
-            --bg-color-dark: #1a1a1a;
+            --bg-color-dark: #000000;
             --text-color-light: #1c1c1e;
             --text-color-dark: #f0f2f5;
             --glass-bg-light: rgba(255, 255, 255, 0.3);
@@ -21,11 +21,13 @@
             --shadow-light: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
             --shadow-dark: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             --player-x-color: #3498db;
-            --player-o-color: #e74c3c;
+            --player-o-color: #ff1900;
             --button-bg-light: #ffffff;
             --button-bg-dark: #2c2c2e;
             --line-color-light: #1c1c1e;
             --line-color-dark: #f0f2f5;
+            --input-bg-light: rgba(255, 255, 255, 0.7);
+            --input-bg-dark: rgba(44, 44, 46, 0.8);
         }
 
         /* Base styles */
@@ -56,7 +58,7 @@
             text-align: center;
             padding: 2rem;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
         }
 
         h1 {
@@ -64,6 +66,80 @@
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
+        
+        /* Player name inputs */
+        .player-names {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+            gap: 2rem;
+        }
+
+        .player-input {
+            width: 100%;
+        }
+
+        .player-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid transparent;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .light-theme .player-input input {
+            background: var(--input-bg-light);
+            border-color: var(--glass-border-light);
+            color: var(--text-color-light);
+        }
+        
+        .dark-theme .player-input input {
+            background: var(--input-bg-dark);
+            border-color: var(--glass-border-dark);
+            color: var(--text-color-dark);
+        }
+        
+        .player-input input:focus {
+            outline: none;
+            border-color: var(--player-x-color);
+        }
+        
+        .player-input.p-o input:focus {
+             border-color: var(--player-o-color);
+        }
+        
+        /* Scoreboard */
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .score {
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+        }
+
+        .light-theme .score {
+            background: var(--glass-bg-light);
+            border: 1px solid var(--glass-border-light);
+        }
+
+        .dark-theme .score {
+            background: var(--glass-bg-dark);
+            border: 1px solid var(--glass-border-dark);
+        }
+        
+        #player-x-score { color: var(--player-x-color); }
+        #player-o-score { color: var(--player-o-color); }
+        .score-divider { font-size: 1.5rem; }
+
 
         /* Status display for game state */
         .status {
@@ -143,8 +219,8 @@
             align-items: center;
         }
         
-        /* Restart button styling */
-        .restart-btn {
+        /* Button styling */
+        .btn {
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
             font-weight: 600;
@@ -154,19 +230,19 @@
             transition: all 0.2s ease-in-out;
         }
         
-        .light-theme .restart-btn {
+        .light-theme .btn {
             background-color: var(--button-bg-light);
             color: var(--text-color-light);
             box-shadow: var(--shadow-light);
         }
         
-        .dark-theme .restart-btn {
+        .dark-theme .btn {
             background-color: var(--button-bg-dark);
             color: var(--text-color-dark);
             box-shadow: var(--shadow-dark);
         }
 
-        .restart-btn:hover {
+        .btn:hover {
             transform: scale(1.05);
         }
         
@@ -214,6 +290,11 @@
             height: 20px;
             fill: currentColor;
         }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
 
     </style>
 </head>
@@ -221,13 +302,31 @@
 
     <div class="game-container">
         <h1>Tic Tac Toe</h1>
+        <div class="player-names">
+            <div class="player-input p-x">
+                <input type="text" id="player-x-name" placeholder="Player X">
+            </div>
+             <div class="player-input p-o">
+                <input type="text" id="player-o-name" placeholder="Player O">
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div id="player-x-score" class="score">Player X: 0</div>
+            <div class="score-divider">-</div>
+            <div id="player-o-score" class="score">Player O: 0</div>
+        </div>
+
         <div class="status"></div>
         <div class="board-container">
             <div class="board"></div>
             <canvas id="winning-line-canvas"></canvas>
         </div>
         <div class="controls">
-            <button class="restart-btn">Restart Game</button>
+            <div class="button-group">
+                 <button class="btn restart-btn">New Round</button>
+                 <button class="btn reset-score-btn">Reset Score</button>
+            </div>
             <div class="theme-toggle">
                 <button class="theme-btn" data-theme="light" title="Light Mode">
                     <svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zm-9-8c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1v2c0 .55.45 1 1 1zm0 16c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1v2c0 .55.45 1 1 1zM5.64 5.64c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.64 2.81c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.42zm12.72 12.72c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.42c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.42zM2.81 18.36c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L2.81 15.54c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41zm12.72-12.72c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.41c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41z"/></svg>
@@ -248,14 +347,22 @@
             const boardElement = document.querySelector('.board');
             const statusElement = document.querySelector('.status');
             const restartBtn = document.querySelector('.restart-btn');
+            const resetScoreBtn = document.querySelector('.reset-score-btn');
             const themeToggleButtons = document.querySelectorAll('.theme-btn');
             const canvas = document.getElementById('winning-line-canvas');
             const ctx = canvas.getContext('2d');
+            const playerXNameInput = document.getElementById('player-x-name');
+            const playerONameInput = document.getElementById('player-o-name');
+            const playerXScoreElement = document.getElementById('player-x-score');
+            const playerOScoreElement = document.getElementById('player-o-score');
 
             // --- Game State ---
             let gameActive = true;
             let currentPlayer = 'X';
             let gameState = ["", "", "", "", "", "", "", "", ""];
+            let players = { X: 'Player X', O: 'Player O' };
+            let scores = { X: 0, O: 0 };
+
 
             // --- Winning Conditions ---
             const winningConditions = [
@@ -265,11 +372,36 @@
             ];
 
             // --- Game Messages ---
-            const winningMessage = () => `Player ${currentPlayer} has won!`;
+            const winningMessage = () => `${players[currentPlayer]} has won!`;
             const drawMessage = () => `Game ended in a draw!`;
-            const currentPlayerTurn = () => `It's ${currentPlayer}'s turn`;
+            const currentPlayerTurn = () => `It's ${players[currentPlayer]}'s turn`;
 
             // --- Functions ---
+            
+             /**
+             * Load names and scores from localStorage
+             */
+            function loadGameData() {
+                const savedScores = JSON.parse(localStorage.getItem('ticTacToeScores'));
+                if (savedScores) {
+                    scores = savedScores;
+                }
+                const savedNames = JSON.parse(localStorage.getItem('ticTacToeNames'));
+                if (savedNames) {
+                    players = savedNames;
+                    playerXNameInput.value = players.X;
+                    playerONameInput.value = players.O;
+                }
+                updateScoreboard();
+            }
+
+            /**
+             * Update the scoreboard display
+             */
+            function updateScoreboard() {
+                playerXScoreElement.textContent = `${players.X}: ${scores.X}`;
+                playerOScoreElement.textContent = `${players.O}: ${scores.O}`;
+            }
 
             /**
              * Handles a click on a cell.
@@ -328,6 +460,9 @@
 
                 if (roundWon) {
                     statusElement.textContent = winningMessage();
+                    scores[currentPlayer]++;
+                    localStorage.setItem('ticTacToeScores', JSON.stringify(scores));
+                    updateScoreboard();
                     gameActive = false;
                     drawWinningLine(winningLine);
                     return;
@@ -355,7 +490,6 @@
                 const startCell = document.querySelector(`.cell[data-index='${winCondition[0]}']`);
                 const endCell = document.querySelector(`.cell[data-index='${winCondition[2]}']`);
                 
-                // Get cell positions relative to the board
                 const startPos = {
                     x: startCell.offsetLeft + startCell.offsetWidth / 2,
                     y: startCell.offsetTop + startCell.offsetHeight / 2
@@ -365,14 +499,13 @@
                     y: endCell.offsetTop + endCell.offsetHeight / 2
                 };
                 
-                // Style the line based on the current theme
                 const isDarkTheme = document.body.classList.contains('dark-theme');
                 ctx.strokeStyle = isDarkTheme ? 'var(--line-color-dark)' : 'var(--line-color-light)';
                 ctx.lineWidth = 10;
                 ctx.lineCap = 'round';
 
                 let progress = 0;
-                const animationDuration = 400; // in ms
+                const animationDuration = 400; 
                 let startTime = null;
 
                 function animate(timestamp) {
@@ -383,7 +516,7 @@
                     const currentX = startPos.x + (endPos.x - startPos.x) * progress;
                     const currentY = startPos.y + (endPos.y - startPos.y) * progress;
 
-                    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous frame
+                    ctx.clearRect(0, 0, canvas.width, canvas.height); 
                     ctx.beginPath();
                     ctx.moveTo(startPos.x, startPos.y);
                     ctx.lineTo(currentX, currentY);
@@ -397,7 +530,7 @@
             }
 
             /**
-             * Restarts the game to its initial state.
+             * Restarts the game to its initial state for a new round.
              */
             function restartGame() {
                 gameActive = true;
@@ -408,8 +541,16 @@
                     cell.textContent = '';
                     cell.classList.remove('x', 'o');
                 });
-                // Clear the winning line canvas
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+
+            /**
+             * Resets the score to zero.
+             */
+            function resetScore() {
+                scores = { X: 0, O: 0 };
+                localStorage.setItem('ticTacToeScores', JSON.stringify(scores));
+                updateScoreboard();
             }
 
             /**
@@ -424,6 +565,19 @@
                     boardElement.appendChild(cell);
                 }
             }
+            
+            /**
+             * Update player names from input fields
+             */
+            function updatePlayerName(player, name) {
+                players[player] = name || `Player ${player}`;
+                localStorage.setItem('ticTacToeNames', JSON.stringify(players));
+                updateScoreboard();
+                if (gameActive) {
+                    statusElement.textContent = currentPlayerTurn();
+                }
+            }
+
 
             // --- Theme Handling ---
             
@@ -447,21 +601,23 @@
             
             // --- Initialization ---
             createBoard();
+            loadGameData();
             statusElement.textContent = currentPlayerTurn();
             restartBtn.addEventListener('click', restartGame);
+            resetScoreBtn.addEventListener('click', resetScore);
             
-            // Set up theme toggle listeners
+            playerXNameInput.addEventListener('change', (e) => updatePlayerName('X', e.target.value));
+            playerONameInput.addEventListener('change', (e) => updatePlayerName('O', e.target.value));
+            
             themeToggleButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     applyTheme(button.dataset.theme);
                 });
             });
 
-            // Apply saved theme or system default on load
             const savedTheme = localStorage.getItem('theme') || 'system';
             applyTheme(savedTheme);
 
-            // Listen for changes in system theme preference
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
                 if (localStorage.getItem('theme') === 'system') {
                     applyTheme('system');

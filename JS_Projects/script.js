@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
         label.textContent = `${solved}/${total}`;
     }
 
+    
 
     function displayUserData(parsedData) {
         const totalQues = parsedData.data.allQuestionsCount[0].count;
